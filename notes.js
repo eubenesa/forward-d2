@@ -162,7 +162,7 @@ var x = 10, y = 20;
 
 
 function foo() {
-  return [1, 2, 3, [4, 5, 6], 7];
+  return [1, 2, 3, , 7];
 }
 var o = {};
 [
@@ -175,3 +175,252 @@ var o = {};
   ] = [], // nested destructuring
   o.f
 ] = foo() || [];
+
+
+function foo() {
+  return {
+    a: 1,
+    b: 2,
+    c: 3,
+    d: [4, { Z: 5 }, 6]
+  }
+}
+var {
+  a: X = 42,
+  b = 10,
+  c: c,
+  d: [
+    e,
+    {
+      Z: f
+    } = {},
+    g
+  ] = []
+} = foo();
+
+
+function foo() {
+  return [];
+}
+[
+  {
+    a
+  } = { a: 10 }
+] = foo();
+console.log(a); // 10
+
+function foo() {
+  return [
+    {}
+  ];
+}
+[
+  {
+    a
+  } = { a: 10 }
+] = foo();
+console.log(a); // undefined
+
+function foo() {
+  return [];
+}
+[
+  {
+    a = 10
+  } = {} // default always happens first
+] = foo();
+console.log(a); // 10
+
+
+function foo() {
+  return [
+    {
+      a: 2,
+      b: 3,
+      c: 4
+    }
+  ];
+}
+[
+  {
+    a = 10,
+    ...o // object spread/gather proposal, not valid right now
+  } = {}
+] = foo();
+
+
+function foo() {
+  return [
+    {
+      a: 2,
+      b: 3,
+      c: 4,
+      d: [5, 6, 7, 8, 9]
+    }
+  ];
+}
+[
+  {
+    a = 10,
+    d: [
+      x1, // 5
+      x2, // 6
+      x3 // 7
+    ],
+    d: [
+      y1, // 5
+      y2, // 6
+      ...y3 // [7, 8, 9]
+    ],
+    d: D // [5, 6, 7]
+  } = {}
+] = foo();
+
+
+function foo() {
+  return {
+      a: 2,
+      b: 3,
+      c: 4,
+  };
+}
+var a, b, c;
+({
+  a,
+  b,
+  c
+} = foo()); // object destructuring without declarer
+console.log(a) // 2
+
+
+function foo() {
+  return {
+      a: 2,
+      b: 3,
+      c: 4,
+  };
+}
+var o = {};
+({
+  a: o.A,
+  b: o.__B,
+  c: o.c
+} = foo());
+console.log(o.A) // 2
+
+
+function foo() {
+  return [
+    2,
+    3,
+    4
+  ];
+}
+var a, b, c;
+var x = [a, b] = foo();
+console.log(x) // [2, 3, 4]
+console.log(a) // 2
+console.log(b) // 3
+[c] = [a, b] = foo();
+
+
+var a, b, c, d, e, f;
+({
+  person: {
+    name: a,
+    age: b
+  }
+} =
+{
+  history: {
+    links: [
+      c,
+      d,
+      e
+    ]
+  }
+} = getJSONObject());
+
+
+function foo(
+{
+  name,
+  age = 30,
+  phone,
+  dob
+} = {},
+[
+  link1,
+  link2,
+  link3
+] = []) {
+  return ;
+}
+foo({
+  name: 'Kyle',
+  age: 36,
+  dob: '..'
+});
+
+
+var config = {
+  age: 36,
+  nicknames: [
+    'Buster'
+  ]
+};
+{
+  let {
+    name = 'John',
+    age = 30,
+    dob = '1/1/1970',
+    nicknames: [
+      nick1 = 'Johnny',
+      nick2 = 'JonBoy'
+    ]
+  } = config; // assignment context
+
+  config = {
+    name,
+    age,
+    dob,
+    nicknames: [
+      nick1,
+      nick2
+    ]
+  };
+}
+
+
+
+
+var a = 2;
+var o = {
+  a,
+  b() {
+    console.log(this.a); // works
+  },
+  c: () => {
+    console.log(this.a); // fails
+  }
+};
+
+
+var a = 2;
+var prop = "c";
+var o = {
+  a,
+  b() {
+    console.log(this.a); // works
+  },
+  ['_' + prop]: 42,
+  [prop.toUpperCase()]() {
+
+  },
+  *d() {
+
+  },
+  *[prop + '2']() {
+
+  } // concise, computed generator method
+};
