@@ -424,3 +424,116 @@ var o = {
 
   } // concise, computed generator method
 };
+
+
+
+
+function currency(strings, ...values) {
+  var str = '';
+  for (let i = 0; i < strings.length; i++) {
+    if (i > 0) {
+      if (typeof values[i - 1] == 'number') {
+        str += `$${values[i - 1].toFixed(2)}`;
+      } else {
+        str += values[i - 1];
+      }
+    }
+    str += strings[i];
+  }
+  return str;
+}
+var name = 'Kyle';
+var orderTotal = 123.94;
+var shipDate = '1/1/16';
+var msg = 'Hello, ' + name + ', your order on ' + shipDate + ' was a total of ' + orderTotal + '.';
+
+var msg = currency`Hello, ${name}, your order on ${shipDate} was a total of ${orderTotal}.`;
+
+
+
+
+var o = {};
+o.__dont_touch_this__ = 42;
+
+var key = Symbol('special property');
+o[key] = 42;
+
+
+var f = (function() {
+  var key = Symbol('special property');
+
+  var o = {
+    setValue(x) {
+      o[key] = x;
+    },
+
+    getValue() {
+      return o[key];
+    }
+  };
+
+  return o;
+})();
+
+
+var o = {
+  [Symbol.iterator]() {
+    var idx = 0;
+    var self = this;
+    return {
+      next() {
+        var val = self.values[idx];
+        var done = !(idx < self.values.length);
+        idx += 2;
+        return {
+          value: val,
+          done: done
+        };
+      }
+    };
+  },
+  values: [1, 2, 3, 4, 5, 6, 7]
+};
+// iterator is an object that has a next method on it
+var it = o[Symbol.iterator]();
+it.next();
+it.next();
+it.next();
+it.next();
+var a = [...o];
+
+
+var o = {
+  *[Symbol.iterator]() {
+    var idx = 0;
+    while (idx < this.values.length) {
+      yield this.values[idx];
+      idx += 2;
+    }
+  },
+  values: [1, 2, 3, 4, 5, 6, 7]
+};
+
+var o = {
+  *[Symbol.iterator]() {
+    var idx = 0;
+    while (idx < 10) {
+      yield Math.random();
+      idx++;
+    }
+  }
+};
+
+for (var v of o) {
+  console.log(v);
+}
+
+
+Number.prototype[Symbol.iterator] = function*() {
+  var start = 0;
+  var end = Number(this);
+  for (let num = start; num <= end; num++) {
+    yield num;
+  }
+};
+[...8]; // [0, 1, 2, 3, 4, 5, 6, 7, 8]
